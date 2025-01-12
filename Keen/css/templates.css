@@ -1,0 +1,179 @@
+/* Reset default styles */
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    background-color: #333;
+}
+
+body>header~* {
+    color: white;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header styles */
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Navigation styles */
+nav {
+    max-width: 600px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li:last-child {
+    margin-right: 0;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Template list styles */
+.template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.template-item.header {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    /* Remove border for header */
+    padding: 0 20px;
+    border: 1px solid #e5e7eb;
+    /* Header background color */
+}
+
+.category,
+.notes,
+.last-updated,
+.actions {
+    width: 25%;
+    /* Divide the header into equal parts */
+}
+
+.template-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    padding: 20px;
+}
+
+
+
+/* Aspect styles */
+.aspect {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #e5e7eb;
+}
+
+/* Button styles */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Form Styles */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    color: #fff;
+}
+
+.form-group input {
+    padding: 0.5rem 0.5rem;
+    border-radius: 8px;
+    border: 2px solid #d4d4d4;
+    width: 75%;
+}
+
+input[type=submit] {
+    width: 75%;
+    border-radius: 8px;
+}
+
+a.register {
+    margin-top: 1rem;
+}
+
+/* Collapsible list styles */
+.collapsible {
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+}
+
+.collapsible-content {
+    display: none;
+    padding: 0 18px;
+    overflow: hidden;
+
+}
+
+.collapsible-content .template-item {
+    width: 100%;
+}
+
+.collapsible-content.show {
+    display: block;
+}

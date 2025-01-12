@@ -1,0 +1,178 @@
+/* home.css */
+
+/* Reset default styles */
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Global */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    /* background-color: #333 !important; */
+    color: #fff !important;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px !important;
+}
+
+/* header {
+
+    color: #fff !important;
+    padding: 20px !important;
+    text-align: center;
+} */
+
+/* Navigation */
+/* nav {
+    max-width: 600px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li:last-child {
+    margin-right: 0;
+}
+
+nav ul li a {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+} */
+
+/* Welcome section */
+#welcome-section {
+    padding: 40px 0;
+    text-align: center;
+}
+
+#welcome-section h1 {
+    font-size: 3em;
+    color: #007bff !important;
+    /* Blue color */
+}
+
+/* Welcome message and New to Mayvis */
+.welcome-message {
+    float: left;
+    /* Pushes it to the left */
+    width: 50%;
+    /* Set width to 50% */
+}
+
+.new-to-mayvis {
+    float: right;
+    /* Pushes it to the right */
+    width: 50%;
+    /* Set width to 50% */
+}
+
+/* Banner - CAROUSEL */
+.banner {
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    max-width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Aspect styles */
+.aspect-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.aspect {
+    flex: 0 0 calc(50% - 20px);
+    margin-bottom: 20px;
+    background-color: #007bff;
+    /* Modern UI blue color */
+    border: 1px solid #0056b3;
+    /* Darker shade of blue */
+    box-sizing: border-box;
+    /* Ensure padding and border are included in the width */
+    border-radius: 10px;
+    /* Add rounded corners */
+    padding: 20px;
+    /* Add padding */
+}
+
+.aspect h3 {
+    margin-bottom: 10px;
+    /* Increase space between title and text */
+}
+
+.aspect p {
+    margin-bottom: 0;
+    /* Remove default bottom margin for paragraph */
+}
+
+#key-aspects h2 {
+    margin-bottom: 20px;
+    /* Add spacing between title and quadrants */
+}
+
+
+
+/* Button styles */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Blue color */
+    color: #fff !important;
+    /* White color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 5px;
+    /* Reduce margin */
+    transition: background-color 0.3s ease;
+    /* Smooth transition effect */
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    /* Lighter shade of blue on hover */
+}
+
+.custom-btn {
+    background-color: #007bff !important;
+    color: #fff !important;
+    /* Add any other custom styles you want */
+}
+
+.custom-btn:hover {
+    background-color: #0056b3 !important;
+    /* Add any other styles for hover state */
+}

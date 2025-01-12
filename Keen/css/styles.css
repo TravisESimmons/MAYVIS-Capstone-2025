@@ -1,0 +1,109 @@
+/* Reset default styles */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Global styles */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  background-color: #333;
+}
+
+body>header~* {
+  color: white;
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  /* Adjust as needed */
+}
+
+/* Header styles */
+header {
+  background-color: #333;
+  /* Adjust background color as needed */
+  color: #fff;
+  /* Adjust text color as needed */
+  padding: 20px;
+  /* Adjust padding as needed */
+  text-align: center;
+}
+
+/* Navigation styles */
+nav {
+  max-width: 600px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+  /* Adjust spacing between menu items as needed */
+}
+
+nav ul li:last-child {
+  margin-right: 0;
+  /* Remove margin from last menu item */
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Button styles */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+
+/* Responsive styles */
+@media (min-width: 768px) {
+  .container {
+    max-width: 750px;
+    /* Adjust as needed */
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 970px;
+    /* Adjust as needed */
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1170px;
+    /* Adjust as needed */
+  }
+}
