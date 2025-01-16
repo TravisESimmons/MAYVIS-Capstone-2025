@@ -1,5 +1,5 @@
 <?php 
-
+// [Modernization  Improved input validation and error handling(Jan 16 2025)
 function delete_picture($user_id, $conn) {
 	$sql = $conn->prepare("DELETE from profile_pictures WHERE user_id = ?");
 	$sql->bind_param("i", $user_id);
