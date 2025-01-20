@@ -1,4 +1,5 @@
 <?php
+// [Modernization complete] Improved code readability and structure of the client approval forms - (Jan 20 2025)
 $title = "Client Proposal View";
 include 'includes/header-new.php';
 include 'connect.php';
