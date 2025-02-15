@@ -1,4 +1,5 @@
 <?php
+// [Modernized! - I Refactored and modernized the client dashboard and removed the jquery tutorial (Feb 15 2025) ]
 $title = "Client-Dashboard";
 include 'includes/header-new.php';
 include 'connect.php';
