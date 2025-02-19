@@ -1,4 +1,5 @@
 <?php
+// [Modernized! - I fixed the templates not being saved to the favourites and gave the employee dashboard a massive facelift! (Feb 19 2025)]
 $title = "Employee Dashboard";
 include 'includes/header-new.php';
 include 'connect.php';
