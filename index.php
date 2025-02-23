@@ -1,4 +1,5 @@
 <?php
+// [Modernization!] The original landing page was honeslty ugly, this is what I always wanted it to be! Updated home page!! (Feb 23 2025)
 $title = "Home";
 include 'includes/header-new.php';
 include('connect.php');
