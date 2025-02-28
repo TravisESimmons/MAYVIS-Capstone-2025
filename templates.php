@@ -1,4 +1,5 @@
 <?php
+// [Modernization] Improved templates page, fixed broken favourite function, the show/hide button was broken for hiding templates, and fixed the buggy accordion. Fully updated UI as well. (Feb 28 2025)
 $title = "Templates";
 include 'includes/header-new.php';
 include 'connect.php';
