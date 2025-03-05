@@ -1,6 +1,6 @@
 <?php
 
-
+// [Modernization!!] Fully updated all steps to the proposal creation workflow - ran into a few bugs to do with html text and parsing the text editor but patched now. (Mar 5 2025)
 include 'connect.php';
 $title = "Proposal Creation";
 
