@@ -1,4 +1,5 @@
 <?php
+// [Modernization!!] Complete revamp and fully updated. Complete modern look now. Had several bugs with viewing proposal details passing in NULL's, mostly new SQL db erros. (Mar 11 2025)
 include('connect.php');
 $title = "Proposals";
 include 'includes/header-new.php';
