@@ -1,5 +1,5 @@
 <?php
-
+//  [Modernization!!] Updated header for modern UI and accessibility - struggled quite a bit with drop down feature for profile section not working on several pages - and profile picture display took a few tries. (Mar 16 2025)
 // Replace this with your own root url when testing
 define("BASE_URL", "");
 
