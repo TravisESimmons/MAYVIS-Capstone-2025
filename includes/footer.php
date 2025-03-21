@@ -1,3 +1,4 @@
+
 <footer class="footer mt-5 py-3 bg-dark">
     <div class="container">
         <div class="row">
@@ -36,3 +37,6 @@
         }
     </style>
 </footer>
+
+<?php
+// [Modernization!!] Updated footer for modern UI - looks real gudder (Mar 20 2025)
