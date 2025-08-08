@@ -1,9 +1,6 @@
 # MAYVIS
 Welcome to NAIT Capstone's MAYVIS Project! This repository contains files to help you set up the necessary database tables and deploy PHP files on your server.
 
-
-## Requirements
-
 To use this project, you need:
 - A web server with PHP support
 - MySQL or MariaDB database server
@@ -33,10 +30,45 @@ Open the PHP files that interact with the database (e.g., connect.php, login/con
 If necessary, create a new MySQL or MariaDB user with appropriate permissions to access the database.
 
 Header Configuration:
-Open includes/header-new.php and set the empty string where BASE_URL is defined to the root url of your project.
+# Mayvis Capstone 2024
 
-Mailer Configuration:
-Open login/functions/send-reset-link.php and change the following:
+A modern, full-featured proposal management web application built as a capstone project for Keen Creative.
+
+## Overview
+
+Mayvis is a web-based platform designed to streamline the creation, management, and approval of business proposals. The application features modern UI/UX, robust user authentication, and a responsive dashboard for both clients and employees.
+
+## Features
+
+- Modern, responsive design
+- Client and employee dashboards
+- Proposal creation, review, and approval workflows
+- Template management
+- User authentication and profile management
+- Notification system
+- Clean, maintainable PHP codebase
+
+## Tech Stack
+
+- **Frontend:** HTML5, CSS3 (custom and Bootstrap), JavaScript
+- **Backend:** PHP 7+
+- **Database:** MySQL
+- **Other:** FontAwesome, jQuery
+
+## Screenshots
+
+### Client Dashboard
+![Client Dashboard](screenshots/client-dashboard.png)
+
+### Employee Dashboard
+![Employee Dashboard](screenshots/employee-dashboard.png)
+
+### Landing Page
+![Landing Page](screenshots/landing-page.png)
+
+## About
+
+This project was developed as a capstone for Keen Creative by TravisESimmons, Evan Mah, Jeb Gallarde, and Melody Mirand. It demonstrates modern PHP development practices, UI/UX design, and full-stack web application architecture.
 - Enter your root url (same as in header-new.php) in the $url string right before /login (line 29)
 - Change the content in the "// creating email" and "//email content" sections with your email credentials. For the Password, create an app password using gmail. https://support.google.com/accounts/answer/185833?hl=en 
 - The same thing must be done in the send-notification.php file under the send_to_client and proposal_update functions. Change the body messages as needed.
