@@ -76,7 +76,7 @@ The landing page welcomes users and provides clear navigation to login or regist
 
 ## About the Project
 
-MAYVIS was developed as a capstone for Keen Creative by TravisESimmons, Evan Mah, Jeb Gallarde, and Melody Mirand. It showcases modern PHP development, collaborative teamwork, and a focus on real-world business needs.
+MAYVIS was developed as a capstone for Keen Creative by Travis Simmons, Evan Mah, Jeb Gallarde, and Melody Mirand. It showcases modern PHP development, collaborative teamwork, and a focus on real-world business needs.
 
 ---
 
