@@ -1,6 +1,6 @@
 # MAYVIS – Capstone Project Presentation
 
-Welcome! I'm TravisESimmons, and this is my team's capstone project: **MAYVIS** – a modern, full-featured proposal management web application built for Keen Creative. This project demonstrates my skills in full-stack PHP development, UI/UX design, and collaborative software engineering.
+Welcome! I'm Travis Simmons, and this is my team's capstone project: **MAYVIS** – a modern, full-featured proposal management web application built for Keen Creative. This project demonstrates my skills in full-stack PHP development, UI/UX design, and collaborative software engineering.
 
 ## What is MAYVIS?
 
@@ -76,7 +76,7 @@ The landing page welcomes users and provides clear navigation to login or regist
 
 ## About the Project
 
-MAYVIS was developed as a capstone for Keen Creative by TravisESimmons, Evan Mah, Jeb Gallarde, and Melody Mirand. It showcases modern PHP development, collaborative teamwork, and a focus on real-world business needs.
+MAYVIS was developed as a capstone for Keen Creative by Travis Simmons, Evan Mah, Jeb Gallarde, and Melody Mirand. It showcases modern PHP development, collaborative teamwork, and a focus on real-world business needs.
 
 ---
 
