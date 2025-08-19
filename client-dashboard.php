@@ -1,5 +1,4 @@
 <?php
-// [Modernized! - I Refactored and modernized the client dashboard and removed the jquery tutorial (Feb 15 2025) ]
 $title = "Client-Dashboard";
 include 'includes/header-new.php';
 include 'connect.php';
@@ -63,422 +62,501 @@ if (empty($recent_proposals)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="public/introjs.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <style>
-    .jumbotron {
-        background-color: #007bff;
-        color: white;
-        padding: 2.5rem 14rem;
-        margin: 0 auto 3rem;
-        max-width: 1400px;
-        border-radius: 0.3rem;
+    /* Modern CSS Variables */
+    :root {
+        --primary-color: #6366f1;
+        --primary-dark: #4f46e5;
+        --primary-light: #818cf8;
+        --secondary-color: #f8fafc;
+        --accent-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --text-white: #ffffff;
+        --bg-light: #f8fafc;
+        --bg-dark: #1f2937;
+        --bg-card: #ffffff;
+        --border-color: #e5e7eb;
+        --border-radius: 16px;
+        --border-radius-sm: 8px;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
     }
 
-    .shadow {
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-
-    .card.bg-dark.shadow {
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-title {
-        margin-top: 0;
-        /* Ensure the title stays at the top */
-        padding: 15px 20px 10px;
-        /* Add padding around the title */
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        background-color: #343a40;
-        /* Adjust the background color as needed */
-    }
-
-
-
-
-    .btn {
-        padding: 10px 20px;
-    }
-
-    .fa-question-circle {
-        font-size: 1.2rem;
-        margin-right: 5px;
-    }
-
-    .introjs-tooltip {
-        max-width: 900px;
-        width: 80%;
-        text-align: center;
-    }
-
-    body,
-    .introjs-skipbutton,
-    .introjs-tooltip-title,
-    .introjs-button,
-    .introjs-helperNumberLayer,
-    .introjs-tooltip-body,
-    .introjs-helperLayer,
-    .introjs-tooltipbuttons {
-        color: #000000;
-    }
-
-    .introjs-skipbutton {
-        position: absolute;
-        bottom: 20px;
-        right: 40px;
-        padding: 10px 20px;
-        color: #000000;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        z-index: 9999;
-        display: inline-block;
-    }
-
-
-    .introjs-tooltip-body {
-        color: #000000;
-    }
-
-    .introjs-tooltip {
-        color: #000000;
-        max-width: 500px;
-        /* Set a fixed width for the tooltip */
-        width: 80%;
-    }
-
-
-    .introjs-button {
-        color: #000000;
-        background-color: #ffffff;
-        border: 1px solid #000000;
-    }
-
-    .introjs-helperNumberLayer {
-        color: #000000;
-        background-color: #ffffff;
-        border: 2px solid #000000;
-    }
-
-    .introjs-tooltip-body {
-        color: #000000;
-    }
-
-    .introjs-helperLayer {
-        border-radius: 10px;
-    }
-
-    .introjs-tooltipbuttons {
-        margin-top: 10px;
-    }
-
-    .alert-info {
-        background-color: #17a2b8;
-        color: #fff;
-    }
-
-    html,
     body {
-        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.6;
+        color: var(--text-dark);
         margin: 0;
         padding: 0;
-        display: flex;
-        flex-direction: column;
+        min-height: 100vh;
     }
 
-    body>.content {
-        flex: 1 0 auto;
+    /* DROPDOWN FIX - Override any conflicting styles */
+    .dropdown-menu {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+        z-index: 999999 !important;
+        transform: none !important;
+        inset: auto 0px auto auto !important;
+        margin: 0 !important;
+        margin-top: 8px !important;
     }
 
-
-    .col-md-6.pr-md-1 .card {
-        height: auto;
+    .dropdown-menu[data-bs-popper] {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+        z-index: 999999 !important;
+        transform: none !important;
+        inset: auto 0px auto auto !important;
     }
 
-    .col-md-6.pr-md-1 .card-body {
-        overflow-y: auto;
-        max-height: 350px;
+    .profile-dropdown {
+        position: relative !important;
     }
 
-    .col-md-6.pr-md-1 .card-body img {
-        max-width: 100%;
-        height: auto;
-        max-height: 200px;
+    .profile-dropdown .dropdown-menu {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
     }
 
-    .card.bg-dark .card-body {
+    /* Ensure navbar stays on top */
+    .modern-navbar {
+        z-index: 999998 !important;
+    }
+
+    header.sticky-top {
+        z-index: 999998 !important;
+    }
+
+    .dashboard-hero {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        position: relative;
         overflow: hidden;
     }
 
-    .card.bg-dark {
-        height: auto;
+    .dashboard-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.1"><circle cx="30" cy="30" r="4"/></g></svg>');
+        opacity: 0.3;
     }
 
+    .dashboard-hero .container {
+        position: relative;
+        z-index: 2;
+    }
 
-    .list-group-item.bg-dark {
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 0;
+    }
+
+    .modern-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+
+    .modern-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        color: white;
+    }
+
+    .notification-alert {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #059669 100%);
         border: none;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-md);
+        color: white;
+        text-align: center;
+        animation: slideInDown 0.5s ease-out;
     }
 
-    .list-group-item.bg-dark.text-light {
-        color: #ffffff;
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    @media (max-width: 767px) {
-        .row {
-            flex-direction: column-reverse;
+    .modern-btn {
+        padding: 0.875rem 2rem;
+        border-radius: var(--border-radius-sm);
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        color: white;
+    }
+
+    .btn-primary-modern:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #3730a3 100%);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-light-modern {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+    }
+
+    .btn-light-modern:hover {
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+    }
+
+    .proposal-card {
+        background: var(--bg-dark);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary-color);
+        transition: var(--transition);
+    }
+
+    .proposal-card:hover {
+        transform: translateX(8px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .proposal-link {
+        color: var(--primary-light);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .proposal-link:hover {
+        color: white;
+        text-decoration: none;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+
+    .status-approved {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .status-denied {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .whats-new-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+    }
+
+    .whats-new-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .service-guide {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+    }
+
+    .service-guide img {
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Modal Updates */
+    .modal-content {
+        border-radius: var(--border-radius);
+        border: none;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
         }
 
-        .col-md-6 {
-            flex: 0 0 100%;
-            max-width: 100%;
+        .dashboard-hero {
+            padding: 2rem 0;
         }
 
-        .btn-group {
-            flex-direction: column;
-        }
-
-        .btn {
+        .modern-btn {
             width: 100%;
-            margin-bottom: 10px;
-        }
-    }
-
-    @media (min-width: 768px) {
-        .col-md-6.pr-md-1 .card {
-            height: 100%;
-        }
-
-        .col-md-6.pr-md-1 .card-body {
-            overflow-y: auto;
-            max-height: 400px;
-        }
-
-        .col-md-6.pr-md-1 .card-body img {
-            max-width: 100%;
-        }
-
-        #proposalHistory {
-            order: -1;
-            margin-top: 50px;
+            margin-bottom: 1rem;
         }
     }
 </style>
 
 <body>
-    <div class="jumbotron jumbotron-fluid bg-primary text-white mb-3 shadow">
+    <!-- Modern Hero Section -->
+    <div class="dashboard-hero">
         <div class="container">
-            <h1 class="display-4" data-step="1" data-intro="Welcome to your client dashboard, <?php echo $userName; ?>! Here's a quick tour.">Welcome, <?php echo $userName; ?>!</h1>
+            <h1 class="hero-title">Welcome, <?php echo $userName; ?>!</h1>
+            <p class="hero-subtitle">Manage your proposals and stay updated with the latest changes</p>
         </div>
     </div>
 
-
-    <div class="container mt-5">
+    <div class="container">
+        <!-- New Proposal Alert -->
         <?php if ($hasUnopenedProposals) : ?>
-            <div class="row justify-content-center mb-3">
-                <div class="col-md-12 text-center">
-                    <div class="alert alert-info" data-step="2" data-intro="You have a new proposal! Check it out in the My Proposals section.">
-                        You have a new proposal!
-                    </div>
-                </div>
+            <div class="notification-alert">
+                <i class="fas fa-bell me-2"></i>
+                <strong>You have a new proposal!</strong> Click "My Proposals" to review it.
             </div>
         <?php endif; ?>
 
-        <!-- My Proposals and Go to Tutorial buttons row -->
-        <div class="row justify-content-center mb-3">
-            <div class="col-md-6 pl-md-1">
-                <div class="row">
-                    <!-- My Proposals Button -->
-                    <div class="col-md-6">
-                        <a href="client-proposals.php" class="btn btn-primary btn-lg btn-block" data-step="3" data-intro="This is where you can view all your proposals.">My Proposals</a>
+        <!-- Action Buttons -->
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <a href="/mayvis/client-proposals.php" class="modern-btn btn-primary-modern w-100">
+                    <i class="fas fa-file-contract"></i>
+                    My Proposals
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="row g-4">
+            <!-- How Our Service Works -->
+            <div class="col-lg-4">
+                <div class="modern-card h-100">
+                    <div class="service-guide text-center">
+                        <h3 class="mb-4">How Our Service Works</h3>
+                        <img src="/mayvis/resources/HIW.jpg" alt="How Our Service Works" class="img-fluid mb-4" style="max-height: 200px;">
+                        
+                        <div class="text-start">
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; font-weight: 700;">1</div>
+                                    <strong>Access Your Portal</strong>
+                                </div>
+                                <p class="ms-5 mb-0">Sign in to view and review your proposals through this portal.</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; font-weight: 700;">2</div>
+                                    <strong>Review Proposals</strong>
+                                </div>
+                                <p class="ms-5 mb-0">Click proposal titles in your history to view detailed information.</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; font-weight: 700;">3</div>
+                                    <strong>Submit Your Response</strong>
+                                </div>
+                                <p class="ms-5 mb-0">Leave your signature, response, and decision - then submit!</p>
+                            </div>
+                            
+                            <div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; font-weight: 700;">4</div>
+                                    <strong>Stay Updated</strong>
+                                </div>
+                                <p class="ms-5 mb-0">Check the "What's New" section for updates and changes.</p>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Go to Tutorial Button -->
-                    <div class="col-md-6">
-                        <div class="text-center">
-                            <button id="startTutorialBtn" class="btn btn-light btn-lg">
-                                <i class="fas fa-question-circle mr-1"></i>
-                                Tutorial
-                            </button>
+                </div>
+            </div>
+
+            <!-- Proposal History -->
+            <div class="col-lg-8">
+                <div class="glass-card">
+                    <div class="p-4">
+                        <h3 class="mb-4">
+                            <i class="fas fa-history me-2"></i>
+                            Proposal History
+                        </h3>
+                        
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            <?php if (!empty($recent_proposals)) : ?>
+                                <?php foreach ($recent_proposals as $proposal) : ?>
+                                    <div class="proposal-card">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-2">
+                                                    <a href="/mayvis/client-approval.php?proposal_id=<?php echo $proposal['proposal_id']; ?>" class="proposal-link">
+                                                        <?php echo htmlspecialchars($proposal['proposal_title']); ?>
+                                                    </a>
+                                                </h5>
+                                                <div class="text-light mb-2">
+                                                    <i class="fas fa-dollar-sign me-2"></i>
+                                                    <strong>Cost:</strong> <?php echo htmlspecialchars($proposal['value']); ?>
+                                                </div>
+                                                <div class="text-light">
+                                                    <i class="fas fa-user me-2"></i>
+                                                    <strong>Creator:</strong> <?php echo htmlspecialchars($proposal['creator_name']); ?>
+                                                </div>
+                                            </div>
+                                            
+                                            <?php if (isset($proposal['status'])) : ?>
+                                                <span class="status-badge status-<?php echo $proposal['status'] == 1 ? 'pending' : ($proposal['status'] == 0 ? 'denied' : 'approved'); ?>">
+                                                    <?php if ($proposal['status'] == 1): ?>
+                                                        <i class="fas fa-clock"></i> Pending
+                                                    <?php elseif ($proposal['status'] == 0): ?>
+                                                        <i class="fas fa-times"></i> Denied
+                                                    <?php else: ?>
+                                                        <i class="fas fa-check"></i> Approved
+                                                    <?php endif; ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <div class="text-center py-5">
+                                    <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                                    <h5>No proposals found</h5>
+                                    <p class="text-light">Your proposal history will appear here once you receive proposals.</p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="container mt-5">
-            <div class="row">
-                <!-- How Our Service Works Section -->
-                <div class="col-md-4 pr-md-1">
-                    <div class="card">
-                        <div class="card-body text-dark">
-                            <h3 class="card-title bg-primary text-white text-center p-3 mb-0">How Our Service Works</h3>
-                            <div class="text-center mt-3">
-                                <img src="./resources/HIW.jpg" alt="How Our Service Works" style="max-width: 100%; height: auto;">
-                            </div>
-                            <div class="text-center mt-3">
-                                <p>1. Now that you're registered and signed in, you can view and review your proposals through this portal. </p>
-                                <p>2. Click the proposal title in Proposal History to view it's details.</p>
-                                <p>4. Leave your signature, response, decision - then Submit!</p>
-                                <p>4. Check out the What's new section for any updates or changes to the site.</p>
-                            </div>
+        <!-- What's New Section -->
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4 text-white">
+                    <i class="fas fa-sparkles me-2"></i>
+                    What's New
+                </h3>
+                
+                <div class="whats-new-card" data-bs-toggle="modal" data-bs-target="#changeLogModal">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-2">Changes in proposal submission process</h5>
+                            <p class="mb-0 text-muted">We've improved how users can submit their changes and comments for proposals.</p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Proposal History Section -->
-                <div class="col-md-8 pl-md-1" data-step="6" data-intro="Here's your proposal history, where you can track all your past proposals and their statuses." data-position="left">
-                    <div class="card bg-dark shadow">
-                        <div class="card-body" style=" max-height: 600px;">
-                            <h3 class="card-title text-light mb-4" style="padding: 15px 20px 10px;">Proposal History</h3>
-                            <ul class="list-group list-group-flush">
-                                <?php if (!empty($recent_proposals)) : ?>
-                                    <?php foreach ($recent_proposals as $proposal) : ?>
-                                        <li class="list-group-item bg-dark text-light">
-                                            <div class="proposal-details">
-                                                <strong>Proposal:</strong> <a href="client-approval.php?proposal_id=<?php echo $proposal['proposal_id']; ?>"><?php echo htmlspecialchars($proposal['proposal_title']); ?></a><br>
-                                                <strong>Cost:</strong> <?php echo htmlspecialchars($proposal['value']); ?><br>
-                                                <strong>Creator:</strong> <?php echo htmlspecialchars($proposal['creator_name']); ?><br>
-                                                <?php if (isset($proposal['status'])) : ?>
-                                                    <span class="badge badge-<?php echo $proposal['status'] == 1 ? 'warning' : ($proposal['status'] == 0 ? 'danger' : 'success'); ?>" title="<?php echo $proposal['status'] == 1 ? 'Pending' : ($proposal['status'] == 0 ? 'Denied' : 'Approved'); ?>">
-                                                        <?php echo $proposal['status'] == 1 ? '&#9203;' : ($proposal['status'] == 0 ? '&#10008;' : '&#10004;'); ?>
-                                                    </span>
-                                                <?php endif; ?>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                <?php else : ?>
-                                    <li class="list-group-item bg-dark text-light">No recent proposals found.</li>
-                                <?php endif; ?>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="container mt-5">
-                    <div class="row justify-content-center">
-                        <!-- What's New Section -->
-                        <div class="col-md-6" data-step="5" data-intro="Check out what's new to stay updated with the latest features and updates." data-position="right">
-                            <h3 class="text-center mb-4">What's New</h3>
-                            <div class="Whats-new">
-                                <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#changeLogModal">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">Changes in proposal submission process</h5>
-                                        <small>1 week ago</small>
-                                    </div>
-                                    <p class="mb-1">We’ve changed how users can submit their changes and comments for proposals.</p>
-                                </a>
-                            </div>
-                        </div>
-
-
-                        <!-- Change Log Modal -->
-                        <div class="modal fade" id="changeLogModal" tabindex="-1" role="dialog" aria-labelledby="changeLogModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-dark text-light">
-                                        <h5 class="modal-title" id="changeLogModalLabel">Change Log - Version 1.0</h5>
-                                        <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body text-dark">
-                                        <p><strong>Version 1.0 (March 2024)</strong></p>
-                                        <ul>
-                                            <li>Implemented new proposal submission process: Streamlined the process of submitting proposals to improve efficiency.</li>
-                                            <li>Added notification for new proposals: Users now receive notifications when new proposals are available for review.</li>
-                                            <li>Improved user interface for better user experience: Made enhancements to the user interface to enhance usability and navigation.</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="text-end">
+                            <small class="text-muted">1 week ago</small>
+                            <br>
+                            <i class="fas fa-chevron-right text-primary"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Change Log Modal -->
+    <div class="modal fade" id="changeLogModal" tabindex="-1" aria-labelledby="changeLogModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title" id="changeLogModalLabel">Change Log - Version 1.0</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark">
+                    <p><strong>Version 1.0 (July 2025)</strong></p>
+                    <ul>
+                        <li>Implemented new proposal submission process: Streamlined the process of submitting proposals to improve efficiency.</li>
+                        <li>Added notification for new proposals: Users now receive notifications when new proposals are available for review.</li>
+                        <li>Improved user interface for better user experience: Made enhancements to the user interface to enhance usability and navigation.</li>
+                        <li>Fixed dropdown navigation positioning and z-index issues.</li>
+                        <li>Updated tutorial system for better user guidance.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
-<!-- jQuery and Intro.js scripts -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script src="public/intro.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var intro = introJs();
-        intro.setOptions({
-            steps: [{
-                    element: '.jumbotron',
-                    intro: 'Welcome to MAYVIS! This is your personalized dashboard where you can find your activities and alerts.',
-                    position: 'right'
-                },
-                <?php if ($hasUnopenedProposals) : ?> {
-                        element: '.alert-info',
-                        intro: 'You have a new proposal! Check it out in the My Proposals section.',
-                        position: 'top'
-                    },
-                <?php endif; ?> {
-                    element: '.btn-primary',
-                    intro: 'Here you can quickly access all your proposals.',
-                    position: 'right'
-                },
-                {
-                    element: '.col-md-4',
-                    intro: 'Understand how our service works to fully utilize all features.',
-                    position: 'right'
-                },
-                {
-                    element: '.card.bg-dark',
-                    intro: 'Review your recent proposal activities here.',
-                    position: 'top'
-                },
-                {
-                    element: '.Whats-new',
-                    intro: 'Stay updated with the latest features and changes.',
-                    position: 'left'
-                },
-
-            ],
-            exitOnOverlayClick: false,
-            showProgress: true,
-            showButtons: true,
-            nextLabel: 'Next',
-            prevLabel: 'Back',
-            skipLabel: 'Skip',
-            doneLabel: 'Next Page',
-            tooltipClass: 'custom-tooltip',
-            tooltipPosition: 'auto',
-            overlayOpacity: 0.5,
-            hidePrev: true,
-            hideNext: false,
-            hideSkip: false,
-            scrollToElement: true
-        });
-
-        // Set the function to execute when the intro is completed
-        intro.oncomplete(function() {
-            window.location.href = 'demo-client-approval.php?start_tutorial=true';
-        });
-
-        intro.onexit(function() {
-            console.log('Tutorial exited before completion.');
-        });
-
-        document.getElementById('startTutorialBtn').addEventListener('click', function() {
-            intro.start(); // Start the tutorial when the button is clicked
-        });
-    });
-</script>
 <?php include 'includes/footer.php'; ?>
-
 </html>

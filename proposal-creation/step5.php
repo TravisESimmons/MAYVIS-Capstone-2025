@@ -1,226 +1,182 @@
 <?php
-if (isset ($_POST['existingClientID'])) {
-    $existingClientID = $_POST['existingClientID'];
+// Start output buffering to prevent header issues
+ob_start();
 
-    // You can fetch additional data about the existing client from your database if needed
-} else {
-    // If 'Use Existing Client' is not checked, handle the new client data
-    $companyName = mysqli_real_escape_string($conn, $_POST['companyName']);
-    $firstName = mysqli_real_escape_string($conn, $_POST['firstName']);
-    $lastName = mysqli_real_escape_string($conn, $_POST['lastName']);
-    $contactEmail = mysqli_real_escape_string($conn, $_POST['contactEmail']);
+// Start session only if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-$title = mysqli_real_escape_string($conn, $_POST['title']);
-$dateCreated = $_POST['dateCreated'];
 
-$personalLetter = mysqli_real_escape_string($conn, $_POST['personalLetter']);
+// Include database connection - correct path from proposal-creation folder
+require_once dirname(__DIR__) . '/connect.php';
 
-$deliverables = $_POST['deliverables'];
-$quantities = $_POST['quantity']; // Corresponding quantities array
-$deliverablesWithQuantities = array_combine($deliverables, $quantities);
+// Initialize variables
+$proposal_id = null;
+$errors = [];
 
-
-$newCompany = "false";
-$client_id = "";
-$lastCompanyId = "";
-
-
-
-?>
-
-
-<?php
-if (isset ($_SESSION['user_id'])) {
-    // check if session user_id is set
-    $user_id = $_SESSION['user_id'];
-
-    // sql query
-    // replace * with "employee_id" if you only need that
-    $get_employee = "SELECT * FROM employees where user_id = " . $user_id;
-
-    $result = $conn->query($get_employee);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-
-        // setting variables
-        $employee_id = $row["employee_id"];
-        $employee_Fname = $row['employee_first_name'];
-        $employee_Lname = $row['employee_last_name'];
-        $employeFullName = "$employee_Fname " . "$employee_Lname";
-
-
-        $user_id = $row["user_id"];
-    } else {
-        echo "0 results";
+// Check if form data was submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // Get form data
+    $existingClientID = $_POST['existingClientID'] ?? null;
+    $title = mysqli_real_escape_string($conn, $_POST['title'] ?? '');
+    $dateCreated = $_POST['dateCreated'] ?? date('Y-m-d');
+    $personalLetter = mysqli_real_escape_string($conn, $_POST['personalLetter'] ?? '');
+    $deliverables = $_POST['deliverables'] ?? [];
+    $quantities = $_POST['quantity'] ?? [];
+    
+    // Validate required fields
+    if (empty($title)) {
+        $errors[] = "Proposal title is required";
     }
-    echo "UserID: $user_id. EmployeeID: $employee_id";
-}
-?>
-
-
-
-<?php
-
-if (isset ($_POST['existingClientID'])) {
-    $get_client = "SELECT * FROM clients where client_id = " . $existingClientID;
-
-    $result = $conn->query($get_client);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-
-        // setting variables
-        $client = $row["client_id"];
-        $client_name = $row['client_name'];
-        $companyName = $client_name;
-    } else {
-        echo "0 results";
+    if (empty($personalLetter)) {
+        $errors[] = "Proposal letter is required";
     }
-
-    $proposal_id = $existingClientID;
-    //
-    $sql3 = "INSERT INTO proposals (creation_date, proposal_title, proposal_letter, client_id, employee_id, employee_creator) VALUES ('$dateCreated', '$title', '$personalLetter', '$existingClientID', '$employee_id', '$employeFullName')";
-    if ($conn->query($sql3)) {
-        $lastProposalID = $conn->insert_id; // Get the ID of the last inserted company
-        $proposal_id = $lastProposalID;
-        //   echo "New proposal  created successfully";
-    } else {
-        echo "Error: " . $sql3 . "<br>" . $conn->error;
+    if (empty($deliverables)) {
+        $errors[] = "At least one deliverable is required";
     }
-
-    $proposal_total = 0; // Initialize proposal total
-    $sql = "INSERT INTO ordered_deliverables (deliverable_id, quantity, proposal_id) VALUES ";
-    foreach ($deliverablesWithQuantities as $deliverableId => $quantity) {
-        $sql .= "($deliverableId, $quantity, $lastProposalID), ";
-        $getPrice = "SELECT price FROM deliverables WHERE deliverable_id = '$deliverableId'";
-        $result = mysqli_query($conn, $getPrice);
-        if (mysqli_error($conn)) {
-            $message = "<p>There was a problem searching</p>";
+    
+    // Get employee information
+    $employee_id = null;
+    $employeFullName = '';
+    if (isset($_SESSION['user_id'])) {
+        $user_id = $_SESSION['user_id'];
+        $get_employee = "SELECT * FROM employees WHERE user_id = ?";
+        $stmt = $conn->prepare($get_employee);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $employee_id = $row["employee_id"];
+            $employee_Fname = $row['employee_first_name'];
+            $employee_Lname = $row['employee_last_name'];
+            $employeFullName = "$employee_Fname $employee_Lname";
         } else {
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $deliverable_price = $row['price'];
-                    $proposal_total += $deliverable_price * $quantity; // Update proposal total
-                }
+            $errors[] = "Employee not found";
+        }
+    } else {
+        $errors[] = "User not logged in";
+    }
+    
+    // If no errors, proceed with database operations
+    if (empty($errors)) {
+        $conn->autocommit(FALSE); // Start transaction
+        
+        try {
+            $client_id = null;
+            
+            if ($existingClientID) {
+                // Use existing client
+                $client_id = $existingClientID;
             } else {
-                $message = "<p>Sorry no records to show</p>";
-            }
-        }
-    }
-    
-    $sql = rtrim($sql, ", "); // Remove the trailing comma and space
-    if (mysqli_query($conn, $sql)) { // Execute the SQL query to insert ordered deliverables
-        $sql2 = "UPDATE proposals SET value = $proposal_total WHERE proposal_id = $existingClientID";
-        if (mysqli_query($conn, $sql2)) { // Execute the SQL query to update proposal value
-            echo "<p>Proposal record updated successfully</p>";
-        } else {
-            echo "Error updating proposal record: " . mysqli_error($conn);
-        }
-    } else {
-        echo "Error inserting ordered deliverables: " . mysqli_error($conn);
-    }
-
-    $sql = rtrim($sql, ", "); // Remove the trailing comma and space
-    if (mysqli_query($conn, $sql)) { // Execute the SQL query to insert ordered deliverables
-        $sql2 = "UPDATE proposals SET value = $proposal_total WHERE proposal_id = $lastProposalID";
-        if (mysqli_query($conn, $sql2)) { // Execute the SQL query to update proposal value
-            echo "<p>Proposal record updated successfully</p>";
-        } else {
-            echo "Error updating proposal record: " . mysqli_error($conn);
-        }
-    } else {
-        echo "Error inserting ordered deliverables: " . mysqli_error($conn);
-    }
-    
-
-
-    // You can fetch additional data about the existing client from your database if needed
-} else {
-    // If 'Use Existing Client' is not checked, handle the new client data
-    $sql1 = "INSERT INTO clients (client_name) VALUES ('$companyName')";
-    if ($conn->query($sql1)) {
-        $lastCompanyId = $conn->insert_id; // Get the ID of the last inserted company
-        // Insert contact information into the second table
-        // echo "New client created successfully";
-    } else {
-        echo "Error: " . $sql1 . "<br>" . $conn->error;
-    }
-    $sql2 = "INSERT INTO contacts (first_name, last_name, email, client_id) VALUES ('$firstName', '$lastName', '$contactEmail', '$lastCompanyId')";
-    if ($conn->query($sql2)) {
-        // echo "New contact created successfully";
-    } else {
-        echo "Error: " . $sql2 . "<br>" . $conn->error;
-    }
-    $sql3 = "INSERT INTO proposals (creation_date, proposal_title, proposal_letter, client_id, employee_id, employee_creator) VALUES ('$dateCreated', '$title', '$personalLetter', '$lastCompanyId', '$employee_id', '$employeFullName')";
-    if ($conn->query($sql3)) {
-        $lastProposalID = $conn->insert_id; // Get the ID of the last inserted company
-        $proposal_id = $lastProposalID;
-        //   echo "New proposal  created successfully";
-    } else {
-        echo "Error: " . $sql3 . "<br>" . $conn->error;
-    }
-
-    $proposal_total = 0; // Initialize proposal total
-    $sql = "INSERT INTO ordered_deliverables (deliverable_id, quantity, proposal_id) VALUES ";
-    foreach ($deliverablesWithQuantities as $deliverableId => $quantity) {
-        $sql .= "($deliverableId, $quantity, $lastProposalID), ";
-        $getPrice = "SELECT price FROM deliverables WHERE deliverable_id = '$deliverableId'";
-        $result = mysqli_query($conn, $getPrice);
-        if (mysqli_error($conn)) {
-            $message = "<p>There was a problem searching</p>";
-        } else {
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $deliverable_price = $row['price'];
-                    $proposal_total += $deliverable_price * $quantity; // Update proposal total
+                // Create new client
+                $companyName = mysqli_real_escape_string($conn, $_POST['companyName'] ?? '');
+                $firstName = mysqli_real_escape_string($conn, $_POST['firstName'] ?? '');
+                $lastName = mysqli_real_escape_string($conn, $_POST['lastName'] ?? '');
+                $contactEmail = mysqli_real_escape_string($conn, $_POST['contactEmail'] ?? '');
+                
+                if (empty($companyName) || empty($firstName) || empty($lastName) || empty($contactEmail)) {
+                    throw new Exception("All client fields are required for new clients");
                 }
-            } else {
-                $message = "<p>Sorry no records to show</p>";
+                
+                // Insert new client
+                $sql1 = "INSERT INTO clients (client_name) VALUES (?)";
+                $stmt1 = $conn->prepare($sql1);
+                $stmt1->bind_param("s", $companyName);
+                if (!$stmt1->execute()) {
+                    throw new Exception("Error creating client: " . $conn->error);
+                }
+                $client_id = $conn->insert_id;
+                
+                // Insert contact
+                $sql2 = "INSERT INTO contacts (first_name, last_name, email, client_id) VALUES (?, ?, ?, ?)";
+                $stmt2 = $conn->prepare($sql2);
+                $stmt2->bind_param("sssi", $firstName, $lastName, $contactEmail, $client_id);
+                if (!$stmt2->execute()) {
+                    throw new Exception("Error creating contact: " . $conn->error);
+                }
             }
+            
+            // Create proposal
+            $sql3 = "INSERT INTO proposals (creation_date, proposal_title, proposal_letter, client_id, employee_id, employee_creator) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt3 = $conn->prepare($sql3);
+            $stmt3->bind_param("ssssis", $dateCreated, $title, $personalLetter, $client_id, $employee_id, $employeFullName);
+            if (!$stmt3->execute()) {
+                throw new Exception("Error creating proposal: " . $conn->error);
+            }
+            $proposal_id = $conn->insert_id;
+            
+            // Process deliverables
+            $proposal_total = 0;
+            $deliverablesWithQuantities = array_combine($deliverables, $quantities);
+            
+            foreach ($deliverablesWithQuantities as $deliverableId => $quantity) {
+                // Get deliverable price
+                $getPrice = "SELECT price FROM deliverables WHERE deliverable_id = ?";
+                $priceStmt = $conn->prepare($getPrice);
+                $priceStmt->bind_param("i", $deliverableId);
+                $priceStmt->execute();
+                $priceResult = $priceStmt->get_result();
+                
+                if ($priceResult->num_rows > 0) {
+                    $priceRow = $priceResult->fetch_assoc();
+                    $deliverable_price = $priceRow['price'];
+                    $proposal_total += $deliverable_price * $quantity;
+                    
+                    // Insert ordered deliverable
+                    $sqlDel = "INSERT INTO ordered_deliverables (deliverable_id, quantity, proposal_id) VALUES (?, ?, ?)";
+                    $stmtDel = $conn->prepare($sqlDel);
+                    $stmtDel->bind_param("iii", $deliverableId, $quantity, $proposal_id);
+                    if (!$stmtDel->execute()) {
+                        throw new Exception("Error inserting deliverable: " . $conn->error);
+                    }
+                } else {
+                    throw new Exception("Deliverable not found: " . $deliverableId);
+                }
+            }
+            
+            // Update proposal total
+            $sqlUpdate = "UPDATE proposals SET value = ? WHERE proposal_id = ?";
+            $stmtUpdate = $conn->prepare($sqlUpdate);
+            $stmtUpdate->bind_param("di", $proposal_total, $proposal_id);
+            if (!$stmtUpdate->execute()) {
+                throw new Exception("Error updating proposal total: " . $conn->error);
+            }
+            
+            // Commit transaction
+            $conn->commit();
+            
+            // Set success message
+            $_SESSION['message'] = "Proposal created successfully!";
+            
+            // Clean output buffer and redirect
+            ob_end_clean();
+            header("Location: /mayvis/proposal-details.php?proposal_id=$proposal_id");
+            exit;
+            
+        } catch (Exception $e) {
+            // Rollback transaction on error
+            $conn->rollback();
+            $errors[] = $e->getMessage();
         }
+        
+        $conn->autocommit(TRUE); // Reset autocommit
     }
-    
-    $sql = rtrim($sql, ", "); // Remove the trailing comma and space
-    if (mysqli_query($conn, $sql)) { // Execute the SQL query to insert ordered deliverables
-        $sql2 = "UPDATE proposals SET value = $proposal_total WHERE proposal_id = $lastProposalID";
-        if (mysqli_query($conn, $sql2)) { // Execute the SQL query to update proposal value
-            echo "<p>Proposal record updated successfully</p>";
-        } else {
-            echo "Error updating proposal record: " . mysqli_error($conn);
-        }
-    } else {
-        echo "Error inserting ordered deliverables: " . mysqli_error($conn);
-    }
-    
 }
 
-
-
-//$lastProposalID = 12; // comment this out
-
-
-
-if ($lastCompanyId) {
-    $client_id = $lastCompanyId;
-} else if ($existingClientID) {
-    $client_id = $existingClientID;
+// If we get here, there were errors or no form submission
+// Clean output buffer and redirect back
+if (!empty($errors)) {
+    $_SESSION['errors'] = $errors;
+    ob_end_clean();
+    header("Location: /mayvis/proposal-creation.php?step=4");
+    exit;
 } else {
-
+    // No form submission, redirect to step 1
+    ob_end_clean();
+    header("Location: /mayvis/proposal-creation.php");
+    exit;
 }
-
-if (isset ($_SESSION['user_id'])) {
-    $currentUser = $_SESSION['user_id'];
-    echo "<p>user id: $currentUser";
-
-}
-
-
-
-?>
-</div>
-
-
-<?php 
-       header("Location: proposal-details.php?proposal_id=$proposal_id");
 ?>

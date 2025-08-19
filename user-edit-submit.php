@@ -1,20 +1,34 @@
 <?php
-// [Modernization] 
-// // Improved input validation and error handling (Jan 17 2025)
+include 'connect.php';
 
-   include 'connect.php';
+$user_id = $_GET['user_id'] ?? null;
 
-    $user_id = $_GET['user_id'];
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $userEmail = $_POST['userEmail'];
-    $userName = $_POST['userName'];
+if (!$user_id || !is_numeric($user_id)) {
+    header("Location: employee-usercontrol.php");
+    exit();
+}
 
+$firstName = trim($_POST['firstName'] ?? '');
+$lastName = trim($_POST['lastName'] ?? '');
+$userEmail = trim($_POST['userEmail'] ?? '');
+$userName = trim($_POST['userName'] ?? '');
 
-    $sql2 = "UPDATE users SET first_name = '$firstName', last_name = '$lastName', user_email = '$userEmail', user_name = '$userName'  WHERE user_id = '$user_id'";
-    if ($conn->query($sql2)) {
-        
-        header("Location: employee-usercontrol.php");
+// Validate inputs
+if (empty($firstName) || empty($lastName) || empty($userEmail) || empty($userName)) {
+    header("Location: employee-usercontrol.php?error=missing_fields");
+    exit();
+}
+
+$stmt = $conn->prepare("UPDATE users SET first_name = ?, last_name = ?, user_email = ?, user_name = ? WHERE user_id = ?");
+$stmt->bind_param("ssssi", $firstName, $lastName, $userEmail, $userName, $user_id);
+
+if ($stmt->execute()) {
+    header("Location: employee-usercontrol.php");
+    exit();
+} else {
+    header("Location: employee-usercontrol.php?error=update_failed");
+    exit();
+}
 
     } else {
         echo "Error: " . $sql2 . "<br>" . $conn->error;

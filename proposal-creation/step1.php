@@ -1,204 +1,353 @@
-<div>
-    <h2 class="mb-4">Add Client</h2>
-    <?php
-    // Check if form is submitted
-    // Load contact table data
- // Load contact table data
- $contacts = array();
- $sql = "SELECT email FROM contacts";
- $result = $conn->query($sql);
- if ($result->num_rows > 0) {
-     while ($row = $result->fetch_assoc()) {
-         $contacts[] = $row['email'];
-     }
- }
-    ?>
-    <div>
-        <?php
-        // Check if form is submitted
-        
-        ?>
-        <div class="progress mb-4">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-    </div>
-    <form action="proposal-creation.php" method="POST" class="needs-validation" novalidate>
-        <input type="hidden" name="step" value="2">
+<div class="step-header">
+    <h2 class="step-title">
+        <i class="fas fa-user-plus me-2"></i>Client Information
+    </h2>
+    <p class="step-description">Add a new client or select an existing one to start your proposal</p>
+</div>
 
-        <div class="form-group">
-            <label for="companyName">Company Name:</label>
-            <input type="text" class="form-control" id="companyName" name="companyName" required>
-            <!-- Error message placed here, outside the letter box -->
-            <div class="alert alert-danger mt-2" id="companyNameError" style="display: none;">Please provide a company
-                name.</div>
-        </div>
+<?php
+// Load contact table data
+$contacts = array();
+$sql = "SELECT email FROM contacts";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $contacts[] = $row['email'];
+    }
+}
+?>
 
-        <div class="form-group">
-            <label for="firstName">First Name:</label>
-            <input type="text" class="form-control" id="firstName" name="firstName" required>
-            <!-- Error message placed here, outside the letter box -->
-            <div class="alert alert-danger mt-2" id="firstNameError" style="display: none;">Please provide your first
-                name.</div>
-        </div>
+<form action="proposal-creation.php" method="POST" class="needs-validation modern-form" id="proposalForm" novalidate>
+    <input type="hidden" name="step" value="2">
 
-        <div class="form-group">
-            <label for="lastName">Last Name:</label>
-            <input type="text" class="form-control" id="lastName" name="lastName" required>
-            <!-- Error message placed here, outside the letter box -->
-            <div class="alert alert-danger mt-2" id="lastNameError" style="display: none;">Please provide your last
-                name.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="contactEmail">Contact Email:</label>
-            <input type="email" class="form-control" id="contactEmail" name="contactEmail" required>
-            <?php
-
-            ?>
-            <!-- Error message placed here, outside the letter box -->
-            <div class="alert alert-danger mt-2" id="contactEmailError" style="display: none;">Please provide a valid
-                email address.</div>
-                <div class="alert alert-warning mt-2" id="emailWarning" style="display: none;">This email already exists in our records.</div>
-
-        </div>
-
-        <div class="form-check">
+    <!-- Client Type Toggle -->
+    <div class="client-type-toggle">
+        <div class="form-check-modern">
             <input class="form-check-input" type="checkbox" id="existingClientCheckbox">
             <label class="form-check-label" for="existingClientCheckbox">
-                Use Existing Client
+                <i class="fas fa-users me-2"></i>Use Existing Client
             </label>
         </div>
+    </div>
 
-        <div id="existingClientSelection" style="display: none;" class="mt-4">
-            <label for="clients">Choose Existing Client:</label>
-            <select id="clients" name="clients[]" class="form-control" required>
+    <!-- New Client Form -->
+    <div id="newClientForm" class="client-form-section">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="companyName" class="form-label">
+                    <i class="fas fa-building me-1"></i>Company Name
+                </label>
+                <input type="text" class="form-control" id="companyName" name="companyName" 
+                       placeholder="Enter company name" required>
+                <div class="alert alert-danger" id="companyNameError" style="display: none;">
+                    <i class="fas fa-exclamation-circle me-1"></i>Company name is required
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName" class="form-label">
+                        <i class="fas fa-user me-1"></i>First Name
+                    </label>
+                    <input type="text" class="form-control" id="firstName" name="firstName" 
+                           placeholder="Enter first name" required>
+                    <div class="alert alert-danger" id="firstNameError" style="display: none;">
+                        <i class="fas fa-exclamation-circle me-1"></i>First name is required
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName" class="form-label">
+                        <i class="fas fa-user me-1"></i>Last Name
+                    </label>
+                    <input type="text" class="form-control" id="lastName" name="lastName" 
+                           placeholder="Enter last name" required>
+                    <div class="alert alert-danger" id="lastNameError" style="display: none;">
+                        <i class="fas fa-exclamation-circle me-1"></i>Last name is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="contactEmail" class="form-label">
+                    <i class="fas fa-envelope me-1"></i>Contact Email
+                </label>
+                <input type="email" class="form-control" id="contactEmail" name="contactEmail" 
+                       placeholder="Enter email address" required>
+                <div class="alert alert-danger" id="contactEmailError" style="display: none;">
+                    <i class="fas fa-exclamation-circle me-1"></i>Valid email address is required
+                </div>
+                <div class="alert alert-warning" id="emailWarning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-1"></i>This email already exists in our records
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Existing Client Selection -->
+    <div id="existingClientSelection" class="client-form-section" style="display: none;">
+        <div class="form-group">
+            <label for="clients" class="form-label">
+                <i class="fas fa-search me-1"></i>Select Existing Client
+            </label>
+            <select id="clients" name="clients[]" class="form-control form-select">
+                <option value="0">Choose a client...</option>
                 <?php
                 $sql = "SELECT * FROM clients ORDER BY client_name ASC";
                 $result = $conn->query($sql);
-                echo "<option value='0'>Select Client</option>";
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        echo "<option value='" . $row['client_id'] . "'>" . $row['client_name'] . "</option>";
+                        echo "<option value='" . $row['client_id'] . "'>" . htmlspecialchars($row['client_name']) . "</option>";
                     }
                 } else {
                     echo "<option disabled>No clients found</option>";
                 }
                 ?>
             </select>
-            <!-- Error message placed here, outside the letter box -->
-            <div class="alert alert-danger mt-2" id="clientSelectionError" style="display: none;">Please select an
-                existing client.</div>
+            <div class="alert alert-danger" id="clientSelectionError" style="display: none;">
+                <i class="fas fa-exclamation-circle me-1"></i>Please select an existing client
+            </div>
         </div>
-        <div class="mt-4">
-            <a href="https://emah10.dmitstudent.ca/DMIT2590/Capstone/proposals.php" class="btn btn-danger">Cancel</a>
-    
-            <button type="submit" class="btn btn-primary" id="nextButton">Next</button>
-        </div>
-    </form>
-
-    <!-- Error message placed here, outside the letter box -->
-    <div class="alert alert-danger mt-2" id="formError" style="display: none;">Please fill out all required fields.
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const existingClientCheckbox = document.getElementById("existingClientCheckbox");
-            const existingClientSelection = document.getElementById("existingClientSelection");
-            const clientsDropdown = document.getElementById("clients");
-            const inputs = document.querySelectorAll('#companyName, #firstName, #lastName, #contactEmail');
-            const formError = document.getElementById("formError");
-            const companyNameError = document.getElementById("companyNameError");
-            const firstNameError = document.getElementById("firstNameError");
-            const lastNameError = document.getElementById("lastNameError");
-            const contactEmailError = document.getElementById("contactEmailError");
-            const clientSelectionError = document.getElementById("clientSelectionError");
-            const companyNameLabel = document.querySelector('label[for="companyName"]');
-            const firstNameLabel = document.querySelector('label[for="firstName"]');
-            const lastNameLabel = document.querySelector('label[for="lastName"]');
-            const contactEmailLabel = document.querySelector('label[for="contactEmail"]');
+    <!-- Form Error Message -->
+    <div class="alert alert-danger" id="formError" style="display: none;">
+        <i class="fas fa-exclamation-circle me-1"></i>Please fill out all required fields correctly
+    </div>
+</form>
 
-            existingClientCheckbox.addEventListener("change", function () {
-                if (existingClientCheckbox.checked) {
-                    existingClientSelection.style.display = "block";
-                    clientsDropdown.required = true;
-                    inputs.forEach(input => {
-                        input.required = false;
-                        input.style.display = "none";
-                        document.getElementById(input.id + "Error").style.display = "none";
-                    });
-                    companyNameLabel.style.display = "none";
-                    firstNameLabel.style.display = "none";
-                    lastNameLabel.style.display = "none";
-                    contactEmailLabel.style.display = "none";
-                } else {
-                    existingClientSelection.style.display = "none";
-                    clientsDropdown.required = false;
-                    inputs.forEach(input => {
-                        input.required = true;
-                        input.style.display = "block";
-                    });
-                    companyNameLabel.style.display = "block";
-                    firstNameLabel.style.display = "block";
-                    lastNameLabel.style.display = "block";
-                    contactEmailLabel.style.display = "block";
-                }
-            });
+<div class="wizard-navigation">
+    <a href="/mayvis/proposals.php" class="btn-wizard btn-secondary-wizard">
+        <i class="fas fa-arrow-left me-1"></i>Cancel
+    </a>
+    <button type="submit" form="proposalForm" class="btn-wizard btn-primary-wizard" id="nextButton">
+        Next Step
+        <i class="fas fa-arrow-right ms-1"></i>
+    </button>
+</div>
 
-            const form = document.querySelector('form.needs-validation');
+<style>
+    .step-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--bg-secondary);
+    }
 
-            form.addEventListener('submit', function (event) {
-                let isValid = true;
-                if (!existingClientCheckbox.checked) {
-                    inputs.forEach((input, index) => {
-                        if (!input.value) {
-                            document.getElementById(input.id + "Error").style.display = "block";
-                            isValid = false;
-                        } else {
-                            document.getElementById(input.id + "Error").style.display = "none";
-                        }
-                    });
-                }
+    .step-title {
+        color: var(--text-dark);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-                if (existingClientCheckbox.checked && clientsDropdown.value === "0") {
-                    clientSelectionError.style.display = "block";
-                    isValid = false;
-                }
+    .step-description {
+        color: var(--text-light);
+        margin: 0;
+        font-size: 1rem;
+    }
 
-                if (!isValid) {
-                    event.preventDefault();
-                    formError.style.display = "block";
-                }
-            });
-        });
-    </script>
+    .client-type-toggle {
+        background: var(--bg-secondary);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-check-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        accent-color: var(--primary-color);
+    }
+
+    .client-form-section {
+        transition: var(--transition);
+        opacity: 1;
+    }
+
+    .client-form-section.hidden {
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    .form-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+        appearance: none;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .step-title {
+            font-size: 1.25rem;
+        }
+        
+        .client-type-toggle {
+            padding: 1rem;
+        }
+    }
+</style>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const contacts = <?php echo json_encode($contacts); ?>;
-        const emailInput = document.getElementById("contactEmail");
-        const emailWarning = document.getElementById("emailWarning");
-        const form = document.getElementById("proposalForm");
+document.addEventListener("DOMContentLoaded", function () {
+    const existingClientCheckbox = document.getElementById("existingClientCheckbox");
+    const newClientForm = document.getElementById("newClientForm");
+    const existingClientSelection = document.getElementById("existingClientSelection");
+    const clientsDropdown = document.getElementById("clients");
+    const inputs = document.querySelectorAll('#companyName, #firstName, #lastName, #contactEmail');
+    const formError = document.getElementById("formError");
+    const nextButton = document.getElementById("nextButton");
 
-        emailInput.addEventListener("input", function () {
-            const enteredEmail = emailInput.value.trim();
-            if (enteredEmail === '') {
-                emailWarning.style.display = "none";
-            } else {
-                if (contacts.includes(enteredEmail)) {
-                    emailWarning.style.display = "block";
-                } else {
-                    emailWarning.style.display = "none";
-                }
-            }
-        });
+    // Toggle between new and existing client forms
+    existingClientCheckbox.addEventListener("change", function () {
+        if (existingClientCheckbox.checked) {
+            newClientForm.style.display = "none";
+            existingClientSelection.style.display = "block";
+            clientsDropdown.required = true;
+            inputs.forEach(input => {
+                input.required = false;
+                clearFieldError(input);
+            });
+        } else {
+            newClientForm.style.display = "block";
+            existingClientSelection.style.display = "none";
+            clientsDropdown.required = false;
+            clearFieldError(clientsDropdown);
+            inputs.forEach(input => {
+                input.required = true;
+            });
+        }
+        formError.style.display = "none";
+    });
 
-        form.addEventListener('submit', function(event) {
-            const enteredEmail = emailInput.value.trim();
-            if (enteredEmail !== '' && contacts.includes(enteredEmail)) {
+    // Email validation for existing contacts
+    const contacts = <?php echo json_encode($contacts); ?>;
+    const emailInput = document.getElementById("contactEmail");
+    const emailWarning = document.getElementById("emailWarning");
+
+    emailInput.addEventListener("input", function () {
+        const enteredEmail = emailInput.value.trim();
+        if (enteredEmail === '') {
+            emailWarning.style.display = "none";
+        } else {
+            if (contacts.includes(enteredEmail)) {
                 emailWarning.style.display = "block";
-                event.preventDefault();
+                emailInput.classList.add('is-invalid');
+            } else {
+                emailWarning.style.display = "none";
+                emailInput.classList.remove('is-invalid');
+            }
+        }
+    });
+
+    // Real-time validation
+    inputs.forEach(input => {
+        input.addEventListener('blur', validateField);
+        input.addEventListener('input', function() {
+            if (input.value.trim()) {
+                clearFieldError(input);
             }
         });
     });
-</script>
 
-</div>
+    clientsDropdown.addEventListener('change', function() {
+        if (clientsDropdown.value !== "0") {
+            clearFieldError(clientsDropdown);
+        }
+    });
+
+    function validateField(e) {
+        const field = e.target;
+        if (!field.value.trim()) {
+            showFieldError(field);
+        } else {
+            clearFieldError(field);
+        }
+    }
+
+    function showFieldError(field) {
+        field.classList.add('is-invalid');
+        const errorElement = document.getElementById(field.id + 'Error');
+        if (errorElement) errorElement.style.display = 'block';
+    }
+
+    function clearFieldError(field) {
+        field.classList.remove('is-invalid');
+        field.classList.add('is-valid');
+        const errorElement = document.getElementById(field.id + 'Error');
+        if (errorElement) errorElement.style.display = 'none';
+    }
+
+    // Form submission validation
+    const form = document.querySelector('form.needs-validation');
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+        formError.style.display = "none";
+
+        if (!existingClientCheckbox.checked) {
+            // Validate new client form
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    showFieldError(input);
+                    isValid = false;
+                }
+            });
+
+            // Check for email conflicts
+            const enteredEmail = emailInput.value.trim();
+            if (enteredEmail && contacts.includes(enteredEmail)) {
+                emailWarning.style.display = "block";
+                emailInput.classList.add('is-invalid');
+                isValid = false;
+            }
+        } else {
+            // Validate existing client selection
+            if (clientsDropdown.value === "0") {
+                showFieldError(clientsDropdown);
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+            formError.style.display = "block";
+            // Smooth scroll to error
+            formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            // Add loading state
+            nextButton.disabled = true;
+            nextButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+        }
+    });
+});
+</script>

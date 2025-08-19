@@ -1,8 +1,5 @@
 <?php
-// KEEN Mayvis Capstone Project
-// Initial file header and authorship comment
-// Created by TravisESimmons, Evan Mah, Jeb Gallarde, Melody Miranda
-// [Modernization] Minor code cleanup and modernization (Jan 2025)
+// Not meant to be the actual employee home page, just a default landing page for when logged in.
 require_once("./login/classes/Login.php");
 include("./profile-functions.php");
 $login = new Login();

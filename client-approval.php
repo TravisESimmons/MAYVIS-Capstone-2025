@@ -1,18 +1,22 @@
 <?php
-// [Modernization complete] Improved code readability and structure of the client approval forms - (Jan 20 2025)
 $title = "Client Proposal View";
 include 'includes/header-new.php';
 include 'connect.php';
 
-$proposal_id = $_GET['proposal_id'];
+$proposal_id = $_GET['proposal_id'] ?? null;
+
+if (!$proposal_id || !is_numeric($proposal_id)) {
+    header("Location: index.php");
+    exit();
+}
 
 // Check if the proposal has been viewed and update the 'seen' flag
-$sql_update_seen = "UPDATE proposals SET seen = 1 WHERE proposal_id = '$proposal_id'";
-mysqli_query($conn, $sql_update_seen);
+$stmt_update_seen = $conn->prepare("UPDATE proposals SET seen = 1 WHERE proposal_id = ?");
+$stmt_update_seen->bind_param("i", $proposal_id);
+$stmt_update_seen->execute();
 
 $proposal_title = $proposal_letter = $creation_date = $status_message = $value = $client_name = $employee_Fname = $employee_Lname = "";
 $status_badge = $status = "";
-
 
 // Fetching the proposal details
 $sql = "SELECT p.*, e.employee_first_name, e.employee_last_name, c.client_name
@@ -34,14 +38,14 @@ if ($result && mysqli_num_rows($result) > 0) {
     $employee_Lname = $row['employee_last_name'];
 
     if ($status == "1") {
-        $status_message = "Approval status: Waiting for approval";
-        $status_badge = '<span class="badge badge-info">&#10070;</span>';
+        $status_message = "Waiting for approval";
+        $status_badge = '<span class="status-badge pending"><i class="fas fa-clock"></i> Pending</span>';
     } elseif ($status == "0") {
-        $status_message = "Approval status: Proposal Denied";
-        $status_badge = '<span class="badge badge-danger">&#10008;</span>';
+        $status_message = "Proposal Denied";
+        $status_badge = '<span class="status-badge denied"><i class="fas fa-times-circle"></i> Denied</span>';
     } elseif ($status == "2") {
-        $status_message = "Approval status: Proposal Approved";
-        $status_badge = '<span class="badge badge-success">&#10004;</span>';
+        $status_message = "Proposal Approved";
+        $status_badge = '<span class="status-badge approved"><i class="fas fa-check-circle"></i> Approved</span>';
     }
 }
 
@@ -50,278 +54,559 @@ if (isset($_SESSION['message'])) {
 }
 ?>
 
-<body>
+<style>
+:root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --dark-color: #1f2937;
+    --light-gray: #f8fafc;
+    --border-color: #e5e7eb;
+    --text-muted: #64748b;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-    <body>
-        <?php
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    font-family: 'Inter', sans-serif;
+    color: var(--dark-color);
+}
 
+.proposal-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
 
-        $sql = "SELECT * FROM proposals WHERE proposal_id = '$proposal_id'";
+.proposal-header {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
 
-        // echo $sql; 
-        $result = mysqli_query($conn, $sql);
+.proposal-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
-        if (mysqli_error($conn)) {
-            $message = "<p>There was a problem searching</p>";
-        } else {
-            if (mysqli_num_rows($result) > 0) {
-                $display = "<div class=\"bg-dark text-light justify-content-center container-lg\" >";
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $proposal_title = $row['proposal_title'];
-                    $proposal_letter = $row['proposal_letter'];
-                    $client_response = $row['client_response'];
-                    $second_sig = $row['second_sig'];
-                    $employee_creator = $row['employee_creator'];
-                    $creation_date = $row['creation_date'];
-                    $status = $row['status'];
-                    $value = $row['value'];
-                    $signature = $row['signature'];
+.proposal-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
 
-                    $client_id = $row['client_id'];
-                    $employee_id = $row['employee_id'];
-                    $sql2 = "SELECT * FROM employees WHERE employee_id = '$employee_id'";
+.meta-item {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+}
 
-                    // echo $sql; 
-                    $result2 = mysqli_query($conn, $sql2);
-                    while ($row = mysqli_fetch_assoc($result2)) {
-                        $employee_Fname = $row['employee_first_name'];
-                        $employee_Lname = $row['employee_last_name'];
-                    }
+.meta-item i {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
 
-                    if (mysqli_error($conn)) {
-                        $message = "<p>There was a problem searching</p>";
-                    }
+.meta-value {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-left: 0.25rem;
+}
 
-                    if ($status === "1") {
-                        $setStatus = "";
-                        $setStatus .= "><p>Approval status: Waiting for approval";
-                        $setStatus .= '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
-                <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
-              </svg></p></div>';
-                    } elseif ($status === "0") {
-                        $setStatus = "";
-                        $setStatus .= "class='bg-danger text-light p-2'><p>Approval status: Proposal Denied";
-                        $setStatus .= '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
-              </svg></p></div>';
-                    } elseif ($status === "2") {
-                        $setStatus = "";
-                        $setStatus .= "class='bg-success text-ligh p-2t'><p>Approval status: Proposal Approved";
-                        $setStatus .= '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-square-fill" viewBox="0 0 16 16">
-                <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm10.03 4.97a.75.75 0 0 1 .011 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.75.75 0 0 1 1.08-.022z"/>
-              </svg></p></div>';
-                    } else {
-                        echo "status error";
-                    }
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
+.status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid var(--warning-color);
+}
 
-                    $display .= "<div class=\"bg-dark text-light\">";
+.status-badge.approved {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid var(--success-color);
+}
 
-                    $display .= "<h2>Detailed View of <span class='font-weight-bold'>$proposal_title</span></h2>";
-                    $display .= "<div>";
+.status-badge.denied {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid var(--danger-color);
+}
 
+.status-badge i {
+    margin-right: 0.5rem;
+}
 
-                    $display .= "<h3>Personal Letter: </h3>";
-                    $display .= "$proposal_letter";
+.proposal-content {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
 
-                    $display .= "<p>Proposal Value: <span class='font-weight-bold'>$$value</span</p>";
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
 
-                    $display .= "</div>";
+.proposal-letter {
+    line-height: 1.8;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
 
-                    $get_client = "SELECT * FROM clients where client_id= " . $client_id;
+.proposal-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin: 1rem 0;
+}
 
-                    $result = $conn->query($get_client);
+.deliverables-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
 
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
+.deliverable-card {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
 
-                        // setting variables
-                        $client_name = $row['client_name'];
-                    } else {
-                        echo "0 results";
-                    }
-                    $display .= "<p>Client : <span class='font-weight-bold'>$client_name</span></p>";
-                    $display .= "<p class=\"mb-3\">Created by: <span class='font-weight-bold'> $employee_creator</span>";
-                    $display .= "<p class=\"mb-3\">Date Created: <span class='font-weight-bold'>$creation_date</span></p>";
+.deliverable-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
 
+.deliverable-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
 
-                    if ($client_response !== "" && $client_response !== null) {
+.deliverable-description {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
 
-                        $display .= "<p>Client Response: $client_response</p>";
-                    } else {
-                        $display .= "";
-                    }
+.deliverable-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
 
+.deliverable-price {
+    color: var(--success-color);
+    font-size: 1.1rem;
+}
 
-                    if ($signature !== "" && $signature !== null) {
+.deliverable-quantity {
+    color: var(--primary-color);
+}
 
-                        $display .= "<p>Signed By: $signature</p>";
-                    } else {
-                        $display .= "";
-                    }
+.approval-form {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
 
-                    $display .= '       
-                ';
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-                    $display .= "<div $setStatus </p></div>";
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    display: block;
+}
 
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: white;
+}
 
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
 
-                    $display .= "<div class='col-3>'";
-                    $display .= "<hr>";
-                    $display .= "<h2 class='mt-4 mb-4'>Ordered Deliverables</h2>";
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
 
+select.form-control {
+    cursor: pointer;
+}
 
-                    $get_deliverables = "
-                    SELECT DISTINCT od.deliverable_id, od.quantity, d.price, d.title, d.description
-                    FROM ordered_deliverables od
-                    JOIN deliverables d ON od.deliverable_id = d.deliverable_id
-                    WHERE od.proposal_id = $proposal_id
-                ";
-                    $result = $conn->query($get_deliverables);
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            // Setting variables
-                            $quantity = $row['quantity'];
-                            $price = $row['price'];
-                            $title = $row['title'];
-                            $description = $row['description'];
+.checkbox-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+    transform: scale(1.2);
+}
 
-                            // Displaying data
-                            $display .= "<h3> $title</h3>";
-                            $display .= "<p>Description: $description</p>";
-                            $display .= "<p>Deliverable price: $price</p>";
-                            $display .= "<p>Quantity: $quantity</p>";
-                        }
-                    } else {
-                        echo "0 results";
-                    }
-                    $display .= '</div>';
-                    $display .= "</div>";
+.btn-submit {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
 
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
 
+.btn-secondary {
+    background: var(--light-gray);
+    color: var(--dark-color);
+    border: 2px solid var(--border-color);
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+}
 
+.btn-secondary:hover {
+    background: var(--border-color);
+    text-decoration: none;
+    color: var(--dark-color);
+}
 
-                    $display .= "</div>";
-                }
+.btn-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+}
 
+.btn-link:hover {
+    background: rgba(99, 102, 241, 0.1);
+    text-decoration: none;
+}
 
-                $display .= "</div>";
-            }
+.btn-link i, .btn-secondary i {
+    margin-right: 0.5rem;
+}
 
-            $display .= " </div>";
-            echo $display;
-        }
+.d-none {
+    display: none !important;
+}
 
+@media (max-width: 768px) {
+    .proposal-container {
+        padding: 1rem;
+    }
+    
+    .proposal-meta {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .deliverable-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style>
 
-
-        ?>
-        <div class="container-lg">
-            <?php
-
-
-
-
-            ?>
-
-            <?php
-            if ($status === "0" || $status === "2") {
-                //echo "status: $status";
-                $hideform = "d-none";
-            } else {
-                $hideform = "";
-            }
-
-            ?>
-            <?php
-            //echo "<p>sig: $second_sig</p>";
-            if ($second_sig === "1") {
-                $second_display = "            
-            <form action='second-approval-submit.php?proposal_id=$proposal_id' method='POST'
-            class='needs-validation' novalidate>";
-
-
-                $second_display .= '          
-            <label for="signature">Second Signature:</label><br>
-            <input type="text" id="signature" name="signature" class="form-control" required><br><br>
-            <div class="invalid-feedback">
-                Please provide a digital signature
+<div class="proposal-container">
+    <!-- Proposal Header -->
+    <div class="proposal-header">
+        <h1 class="proposal-title"><?php echo htmlspecialchars($proposal_title); ?></h1>
+        
+        <div class="proposal-meta">
+            <div class="meta-item">
+                <i class="fas fa-user"></i>
+                Client: <span class="meta-value"><?php echo htmlspecialchars($client_name); ?></span>
             </div>
-            
-            
-            <div class="form-group">
-            <label for="response"> Second Response:</label><br>
-            <textarea id="response" name="response" rows="4" cols="50" required></textarea><br><br>
+            <div class="meta-item">
+                <i class="fas fa-user-tie"></i>
+                Created by: <span class="meta-value"><?php echo htmlspecialchars($employee_Fname . ' ' . $employee_Lname); ?></span>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-calendar"></i>
+                Date: <span class="meta-value"><?php echo htmlspecialchars($creation_date); ?></span>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-dollar-sign"></i>
+                Value: <span class="meta-value proposal-value">$<?php echo htmlspecialchars(number_format($value, 2)); ?></span>
+            </div>
         </div>
-        <div class="form-group">
-        <label for="decision">Decision:</label><br>
-        <select id="decision" name="decision" required>
-            <option value="2">Approve</option>
-            <option value="0">Denied</option>
-        </select><br><br>
-    </div>';
+        
+        <div style="margin-top: 1rem;">
+            <?php echo $status_badge; ?>
+        </div>
+    </div>
 
+    <!-- Proposal Content -->
+    <div class="proposal-content">
+        <h2 class="section-title">Proposal Letter</h2>
+        <div class="proposal-letter">
+            <?php echo $proposal_letter; ?>
+        </div>
+        
+        <?php if (!empty($row['client_response'])): ?>
+            <h3 class="section-title">Client Response</h3>
+            <div class="proposal-letter">
+                <?php echo $row['client_response']; ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($row['signature'])): ?>
+            <h3 class="section-title">Digital Signature</h3>
+            <div class="proposal-letter">
+                Signed by: <strong><?php echo htmlspecialchars($row['signature']); ?></strong>
+            </div>
+        <?php endif; ?>
+    </div>
 
-                $second_display .= '<input type="submit" value="Submit"class="btn-primary">';
-                $second_display .= "</form>";
-                echo $second_display;
-            } else {
+    <!-- Deliverables Section -->
+    <div class="deliverables-section">
+        <h2 class="section-title">Ordered Deliverables</h2>
+        
+        <?php
+        $get_deliverables = "
+            SELECT DISTINCT od.deliverable_id, od.quantity, d.price, d.title, d.description
+            FROM ordered_deliverables od
+            JOIN deliverables d ON od.deliverable_id = d.deliverable_id
+            WHERE od.proposal_id = $proposal_id
+        ";
+        $result = $conn->query($get_deliverables);
 
-                //   echo "sig status: $second_sig";
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $quantity = $row['quantity'];
+                $price = $row['price'];
+                $title = $row['title'];
+                $description = $row['description'];
+                ?>
+                <div class="deliverable-card">
+                    <div class="deliverable-title"><?php echo htmlspecialchars($title); ?></div>
+                    <div class="deliverable-description"><?php echo htmlspecialchars($description); ?></div>
+                    <div class="deliverable-details">
+                        <span class="deliverable-price">$<?php echo number_format($price, 2); ?></span>
+                        <span class="deliverable-quantity">Quantity: <?php echo $quantity; ?></span>
+                    </div>
+                </div>
+                <?php
             }
-            ?>
-            <form action="client-submit-approval.php?proposal_id=<?= $proposal_id ?>" method="POST" class="needs-validation <?php echo $hideform ?>" novalidate>
-                <input type="hidden" name="step" value="2">
+        } else {
+            echo "<p>No deliverables found for this proposal.</p>";
+        }
+        ?>
+    </div>
 
+    <!-- Approval Forms -->
+    <?php
+    // Get fresh proposal data for forms
+    $sql = "SELECT * FROM proposals WHERE proposal_id = '$proposal_id'";
+    $result = mysqli_query($conn, $sql);
+    $proposal_data = mysqli_fetch_assoc($result);
+    
+    $client_response = $proposal_data['client_response'];
+    $second_sig = $proposal_data['second_sig'];
+    $signature = $proposal_data['signature'];
+    $status = $proposal_data['status'];
+    
+    $hideform = ($status === "0" || $status === "2") ? "d-none" : "";
+    ?>
+
+    <?php if ($second_sig === "1"): ?>
+        <!-- Second Approval Form -->
+        <div class="approval-form">
+            <h2 class="section-title">Second Approval Required</h2>
+            <form action='second-approval-submit.php?proposal_id=<?php echo $proposal_id; ?>' method='POST' class='needs-validation' novalidate>
                 <div class="form-group">
-
-                    <label for="signature">Signature:</label><br>
-                    <input type="text" id="signature" name="signature" class="form-control" required><br><br>
+                    <label for="signature" class="form-label">
+                        <i class="fas fa-signature"></i> Second Signature
+                    </label>
+                    <input type="text" id="signature" name="signature" class="form-control" required placeholder="Enter your digital signature">
                     <div class="invalid-feedback">
                         Please provide a digital signature
                     </div>
-
-                    <label for="second_sig">This will require another signature:</label><br>
-                    <input type="checkbox" id="second_sig" name="second_sig" value="yes">
-
                 </div>
+                
                 <div class="form-group">
-                    <label for="response">Response:</label><br>
-                    <textarea id="response" name="response" rows="4" cols="50" required></textarea><br><br>
+                    <label for="response" class="form-label">
+                        <i class="fas fa-comment"></i> Second Response
+                    </label>
+                    <textarea id="response" name="response" class="form-control" required placeholder="Enter your response..."></textarea>
                 </div>
-
-
+                
                 <div class="form-group">
-                    <label for="decision">Decision:</label><br>
-                    <select id="decision" name="decision" required>
+                    <label for="decision" class="form-label">
+                        <i class="fas fa-gavel"></i> Decision
+                    </label>
+                    <select id="decision" name="decision" class="form-control" required>
+                        <option value="">Select Decision</option>
                         <option value="2">Approve</option>
-                        <option value="0">Denied</option>
-                    </select><br><br>
+                        <option value="0">Deny</option>
+                    </select>
                 </div>
-                <input type="submit" value="Submit" class="btn-primary">
+                
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check"></i> Submit Second Approval
+                </button>
             </form>
-
-            <!-- Terms and Conditions Link -->
-            <div class="mt-3" data-step="11" data-intro="Read the terms and conditions here.">
-                <a href="terms-conditions.php" class="btn btn-link">View Terms and Conditions</a>
-            </div>
-
-            <!-- Back to Dashboard Link -->
-            <div class="mt-3" data-step="12" data-intro="Go back to the dashboard.">
-                <a href="client-dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
-            </div>
         </div>
+    <?php endif; ?>
 
+    <!-- Primary Approval Form -->
+    <div class="approval-form <?php echo $hideform; ?>">
+        <h2 class="section-title">Proposal Response</h2>
+        <form action="client-submit-approval.php?proposal_id=<?= $proposal_id ?>" method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="step" value="2">
 
-        <?php include 'includes/footer.php'; ?>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <div class="form-group">
+                <label for="signature" class="form-label">
+                    <i class="fas fa-signature"></i> Digital Signature
+                </label>
+                <input type="text" id="signature" name="signature" class="form-control" required placeholder="Enter your digital signature">
+                <div class="invalid-feedback">
+                    Please provide a digital signature
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="second_sig" name="second_sig" value="yes">
+                    <label for="second_sig">This proposal requires a second signature</label>
+                </div>
+            </div>
 
+            <div class="form-group">
+                <label for="response" class="form-label">
+                    <i class="fas fa-comment"></i> Your Response
+                </label>
+                <textarea id="response" name="response" class="form-control" required placeholder="Enter your response to this proposal..."></textarea>
+            </div>
 
+            <div class="form-group">
+                <label for="decision" class="form-label">
+                    <i class="fas fa-gavel"></i> Decision
+                </label>
+                <select id="decision" name="decision" class="form-control" required>
+                    <option value="">Select Your Decision</option>
+                    <option value="2">Approve Proposal</option>
+                    <option value="0">Deny Proposal</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Submit Response
+            </button>
+        </form>
+    </div>
 
-    </body>
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="terms-conditions.php" class="btn-link">
+            <i class="fas fa-file-contract"></i> View Terms and Conditions
+        </a>
+        <a href="client-dashboard.php" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
 
-    </html>
+<?php include 'footer.php'; ?>
+
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+
+</body>
+</html>

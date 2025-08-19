@@ -1,0 +1,18 @@
+{
+    "php.validate.enable": false,
+    "php.suggest.basic": false,
+    "files.associations": {
+        "*.php": "php"
+    },
+    "emmet.includeLanguages": {
+        "php": "html"
+    },
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "html.format.indentInnerHtml": true,
+    "css.validate": true,
+    "javascript.validate.enable": true,
+    "extensions.ignoreRecommendations": false,
+    "workbench.startupEditor": "readme"
+}
