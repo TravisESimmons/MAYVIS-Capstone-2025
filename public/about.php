@@ -1,6 +1,7 @@
 <?php
+// Update paths for includes after moving files
 $title = "About Us";
-include 'includes/header-new.php';
+include '../includes/header-new.php';
 ?>
 
 <style>

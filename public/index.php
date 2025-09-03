@@ -1,7 +1,8 @@
 <?php
+// Update paths for includes after moving files
 $title = "Home";
-include 'includes/header-new.php';
-include('connect.php');
+include '../includes/header-new.php';
+include('../connect.php');
 ?>
 
 <head>
