@@ -1,42 +1,96 @@
-# MAYVIS
-Welcome to NAIT Capstone's MAYVIS Project! This repository contains files to help you set up the necessary database tables and deploy PHP files on your server.
+# MAYVIS – Marketing Proposal Builder
 
+A full-stack PHP/MySQL web application built as part of NAIT’s Capstone project.  
+Originally created for a creative agency to streamline marketing proposal creation, review, and delivery.
 
-## Requirements
+This repository contains the full application, including the PHP backend, Tailwind-based UI, media handling, and complete SQL schema.
 
-To use this project, you need:
-- A web server with PHP support
-- MySQL or MariaDB database server
-- Git (optional, for cloning this repository.
+---
 
-### Setting up the Database
+## Overview
 
-1. First, make sure you have a MySQL or MariaDB server installed and running.
-2. Navigate to the `database/` directory.
-3. Open `schema.sql` in your preferred SQL client.
-4. Execute the SQL commands in your SQL client to create the necessary tables.
+MAYVIS was developed by a three-person team.  
+My contributions included:
 
-## Deploying PHP files
-Clone the Repository:
-If you have Git installed, you can clone the repository directly to your server's document root directory. Open a terminal or command prompt and run:
-bash
-Copy code
-git clone https://github.com/DMIT-2590/Keen.git
-Alternatively, you can download the ZIP file from the repository's GitHub page and extract it into your server's document root directory.
-**Configure Web Server:**
-Ensure that your web server (e.g., Apache, Nginx) is installed and properly configured to serve PHP files.
-If you're using Apache, make sure mod_php or php-fpm is enabled.
-For Nginx, ensure that PHP-FPM is installed and configured to handle PHP files.
+- Designing and building the **entire SQL database schema**
+- Rebuilding UI layouts using **Tailwind CSS**
+- Refactoring legacy PHP into a more maintainable structure
+- Fixing broken media upload logic and updating file-handling workflow
+- Cleaning up inconsistent code and reorganizing the project for deployment
+- Providing documentation and setup instructions
 
-Database Configuration:
-Open the PHP files that interact with the database (e.g., connect.php, login/config/db.php) and ensure that the database connection settings (hostname, username, password, database name) match your server's configuration.
-If necessary, create a new MySQL or MariaDB user with appropriate permissions to access the database.
+---
 
-Header Configuration:
-Open includes/header-new.php and set the empty string where BASE_URL is defined to the root url of your project.
+## Screenshots
 
-Mailer Configuration:
-Open login/functions/send-reset-link.php and change the following:
-- Enter your root url (same as in header-new.php) in the $url string right before /login (line 29)
-- Change the content in the "// creating email" and "//email content" sections with your email credentials. For the Password, create an app password using gmail. https://support.google.com/accounts/answer/185833?hl=en 
-- The same thing must be done in the send-notification.php file under the send_to_client and proposal_update functions. Change the body messages as needed.
+### Landing Page
+<div align="center">
+  <img src="resources/screenshots/landing-page.png" width="450"/>
+</div>
+
+### Client Dashboard
+<div align="center">
+  <img src="resources/screenshots/client-dashboard.png" width="450"/>
+</div>
+
+### Employee Dashboard
+<div align="center">
+  <img src="resources/screenshots/employee-dashboard.png" width="450"/>
+</div>
+
+---
+
+## Features
+
+### Proposal Management
+- Create, edit, and manage multi-section marketing proposals
+- Add project details, descriptions, pricing sections, and media items
+- Save drafts and return later
+- Generate final proposal output for client review
+
+### User Roles
+- **Clients** – Manage their proposals  
+- **Employees** – Create, edit, and review proposals  
+- **Admins** – Manage users and system configuration  
+
+### Authentication & Accounts
+- Secure login system  
+- Role-based dashboards  
+- Session handling with proper access control  
+
+### Media Upload
+- Add images and files to proposal sections  
+- Server-side validation  
+- Organized file storage and preview support  
+
+### UI/UX Improvements
+- Full Tailwind CSS redesign  
+- Responsive layout for desktop and tablet  
+- Streamlined navigation and improved workflow  
+
+---
+
+## Tech Stack
+
+- **Frontend:** Tailwind CSS, JavaScript  
+- **Backend:** PHP 8  
+- **Database:** MySQL / MariaDB  
+- **Web Server:** Apache  
+- **Tools:** Git, XAMPP, phpMyAdmin  
+
+---
+
+## Database Setup
+
+1. Ensure MySQL or MariaDB is running.  
+2. Navigate to the `database/` directory.  
+3. Import `schema.sql` into your SQL client.  
+4. Confirm all tables were created successfully.
+
+---
+
+## Running the Application
+
+### Clone the Repository
+```bash
+git clone https://github.com/TravisESimmons/MAYVIS-Capstone-2025.git
