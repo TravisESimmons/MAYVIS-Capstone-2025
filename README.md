@@ -3,7 +3,7 @@
 A full-stack PHP/MySQL web application built as part of NAIT’s Capstone project.  
 Originally created for a creative agency to streamline marketing proposal creation, review, and delivery.
 
-This repository contains the full application, including the PHP backend, Tailwind-based UI, media handling, and complete SQL schema.
+This repository contains the full application, including the PHP backend, Tailwind-based UI, media handling, and SQL schema.
 
 ---
 
@@ -25,17 +25,17 @@ My contributions included:
 
 ### Landing Page
 <div align="center">
-  <img src="resources/screenshots/landing-page.png" width="450"/>
+  <img src="screenshots/landing-page.png" width="450"/>
 </div>
 
 ### Client Dashboard
 <div align="center">
-  <img src="resources/screenshots/client-dashboard.png" width="450"/>
+  <img src="screenshots/client-dashboard.png" width="450"/>
 </div>
 
 ### Employee Dashboard
 <div align="center">
-  <img src="resources/screenshots/employee-dashboard.png" width="450"/>
+  <img src="screenshots/employee-dashboard.png" width="450"/>
 </div>
 
 ---
@@ -43,30 +43,30 @@ My contributions included:
 ## Features
 
 ### Proposal Management
-- Create, edit, and manage multi-section marketing proposals
-- Add project details, descriptions, pricing sections, and media items
-- Save drafts and return later
-- Generate final proposal output for client review
+- Create, edit, and manage multi-section marketing proposals  
+- Add project details, pricing sections, descriptions, and media  
+- Save drafts and return later  
+- Generate a final proposal for client review  
 
-### User Roles
-- **Clients** – Manage their proposals  
-- **Employees** – Create, edit, and review proposals  
-- **Admins** – Manage users and system configuration  
+### User Roles & Permissions
+- **Clients** – review and manage their proposals  
+- **Employees** – build and update proposals  
+- **Admins** – manage system settings and users  
 
-### Authentication & Accounts
-- Secure login system  
-- Role-based dashboards  
-- Session handling with proper access control  
+### Authentication
+- Secure login  
+- Role-based dashboard routing  
+- Session handling  
 
 ### Media Upload
-- Add images and files to proposal sections  
-- Server-side validation  
-- Organized file storage and preview support  
+- Supports attaching images/files to proposal sections  
+- Improved file validation and storage path management  
+- Live previews for uploaded media  
 
-### UI/UX Improvements
+### UI/UX Enhancements
 - Full Tailwind CSS redesign  
-- Responsive layout for desktop and tablet  
-- Streamlined navigation and improved workflow  
+- Modern, responsive layout  
+- Better navigation flow and clarity  
 
 ---
 
@@ -75,17 +75,17 @@ My contributions included:
 - **Frontend:** Tailwind CSS, JavaScript  
 - **Backend:** PHP 8  
 - **Database:** MySQL / MariaDB  
-- **Web Server:** Apache  
+- **Server:** Apache  
 - **Tools:** Git, XAMPP, phpMyAdmin  
 
 ---
 
 ## Database Setup
 
-1. Ensure MySQL or MariaDB is running.  
-2. Navigate to the `database/` directory.  
-3. Import `schema.sql` into your SQL client.  
-4. Confirm all tables were created successfully.
+1. Make sure MySQL or MariaDB is running.
+2. Navigate to the `database/` directory.
+3. Import `schema.sql` into your SQL client.
+4. Confirm tables were created successfully.
 
 ---
 
